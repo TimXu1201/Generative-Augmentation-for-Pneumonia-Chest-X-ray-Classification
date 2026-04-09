@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+
+# Archives
+*.zip
+
+# Raw data
+chest_xray/
+
+# Generated datasets and outputs
+Experiment_Datasets/
+output_ddpm/
+output_wgan/
+hw2/outputs/
+
+# Model artifacts
+*.pt
+*.pth
+*.ckpt
+*.npy
+
+# Homework 3 folder contains the image corpus and generated artifacts.
+# Keep only the report and the main training script public.
+hw3/*
+!hw3/285_hw3.pdf
+!hw3/WGAN_GP.py

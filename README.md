@@ -1,66 +1,86 @@
-# Pneumonia Chest X-ray Augmentation with WGAN-GP and Mini-DDPM
+# ECE 285: Generative Modeling for Chest X-ray Augmentation
 
-This repository contains the code for a lightweight generative augmentation study on pneumonia chest X-ray images. The project compares **WGAN-GP** and **Mini-DDPM** from both the **generative** and **downstream classification** perspectives.
+This repository contains my ECE 285 project work on **synthetic pneumonia chest X-ray generation** and **downstream classification evaluation**.
 
-## Overview
+The core idea is to compare two lightweight generative pipelines:
 
-The goal of this project is to generate synthetic **pneumonia** chest X-ray images and test whether they can replace part of the real pneumonia training data without hurting downstream classification performance.
+- **WGAN-GP**
+- **Mini-DDPM**
 
-The full pipeline includes:
+and then evaluate whether synthetic pneumonia images can replace part of the real pneumonia training set without hurting downstream binary classification performance.
 
-1. Train **WGAN-GP** on pneumonia images only
-2. Train **Mini-DDPM** on pneumonia images only
-3. Generate synthetic pneumonia images from the best checkpoint
-4. Build balanced downstream experiment datasets
-5. Train **ResNet-18** for binary classification:
-   - **Normal vs. Pneumonia**
-   - **ImageNet-pretrained** or **from scratch**
+## Project Pipeline
 
-## Repository Files
+1. Train **WGAN-GP** on pneumonia-only chest X-ray images.
+2. Train **Mini-DDPM** on the same target class.
+3. Generate synthetic pneumonia samples from the best checkpoints.
+4. Build downstream experiment datasets with different real/synthetic mixtures.
+5. Train **ResNet-18** classifiers for normal-vs-pneumonia classification.
+6. Compare training behavior and downstream performance.
 
-- `WGAN_GP.py` — WGAN-GP training and image generation
-- `mini_ddpm.py` — Mini-DDPM training and image generation
-- `build_datasets.py` — build downstream experiment datasets
-- `resnet.py` — ResNet-18 training and evaluation
+## Main Files
+
+- `WGAN_GP.py`
+  WGAN-GP training and sample generation.
+- `mini_ddpm.py`
+  Lightweight DDPM training and sample generation.
+- `build_datasets.py`
+  Builds experiment datasets for downstream classification.
+- `resnet.py`
+  ResNet-18 training and evaluation script.
+- `fid.py`
+  FID-related helper script.
+- `wgan_w_dist_academic.png`
+  Example training visualization.
+
+## Supporting Course Work
+
+This folder also keeps several related course deliverables:
+
+- `285_final_report.pdf`
+- `285_midterm_report.pdf`
+- `project proposal.pdf`
+- `hw2/`
+- `hw3/`
+- `none_weight_result/`
+- `pretrain_results/`
 
 ## Dataset
 
-This project uses the **Kaggle Chest X-Ray Images (Pneumonia)** dataset:
+This project uses the **Chest X-Ray Images (Pneumonia)** dataset from Kaggle:
 
-https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
+<https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia>
 
-The dataset is **not included** in this repository.
+The dataset is **not included** in this public repository.
 
-Expected folder structure:
+Expected source structure before running the pipeline:
 
 ```text
 chest_xray/
-├── train/
-│   ├── NORMAL/
-│   └── PNEUMONIA/
-└── test/
-    ├── NORMAL/
-    └── PNEUMONIA/
+|-- train/
+|   |-- NORMAL/
+|   `-- PNEUMONIA/
+`-- test/
+    |-- NORMAL/
+    `-- PNEUMONIA/
 ```
 
 ## Environment
 
-Recommended environment:
+Typical dependencies include:
 
 - Python 3.10+
-- PyTorch
+- torch
 - torchvision
-- tqdm
-- scikit-learn
 - matplotlib
-- pytorch-ignite
+- tqdm
 - pillow
+- pytorch-ignite
+- scikit-learn
 
-Install the dependencies manually in your own environment.
+## Example Commands
 
-## 1. Train WGAN-GP
-
-Example:
+### Train WGAN-GP
 
 ```bash
 python WGAN_GP.py \
@@ -71,9 +91,7 @@ python WGAN_GP.py \
   --device cuda
 ```
 
-## 2. Train Mini-DDPM
-
-Example:
+### Train Mini-DDPM
 
 ```bash
 python mini_ddpm.py \
@@ -84,32 +102,13 @@ python mini_ddpm.py \
   --device cuda
 ```
 
-## 3. Build Downstream Datasets
-
-Run:
+### Build Downstream Experiment Datasets
 
 ```bash
 python build_datasets.py
 ```
 
-This script creates:
-
-```text
-Experiment_Datasets/
-├── Exp_A_Baseline/
-├── Exp_B_WGAN/
-└── Exp_C_DDPM/
-```
-
-### Dataset Settings
-
-- **Baseline**: all pneumonia images are real
-- **WGAN-GP**: pneumonia class is a mixture of real and WGAN-generated images
-- **Mini-DDPM**: pneumonia class is a mixture of real and DDPM-generated images
-
-## 4. Run ResNet-18
-
-Example:
+### Train the ResNet Classifier
 
 ```bash
 python resnet.py \
@@ -120,30 +119,17 @@ python resnet.py \
   --device cuda
 ```
 
-## Important Note for ResNet Weights
+## What Is Excluded
 
-In `resnet.py`, the backbone weights are changed **manually** inside the code.
+This public repository intentionally excludes:
 
-Current line:
+- raw chest X-ray images
+- generated synthetic image folders
+- built experiment datasets
+- large training checkpoints
+- local archives and cache outputs
 
-```python
-model = models.resnet18(weights=None)
-```
+## Notes
 
-Manual options:
-
-- `weights=None` → train from scratch
-- `weights=ResNet18_Weights.IMAGENET1K_V1` → ImageNet pretrained
-
-Please edit this line manually before running the experiment!!!
-
-## Outputs
-
-Typical outputs include:
-
-- generated pneumonia images
-- training logs
-- CSV metric files
-- ROC data
-- downstream experiment datasets
-
+- In `resnet.py`, the pretrained-vs-scratch setting is selected manually inside the script.
+- The current GitHub version of this project already exists as `TimXu1201/ECE-285`; this local README keeps the repository aligned with the cleaned public version.
