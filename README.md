@@ -28,6 +28,13 @@ The local experiment copy used the following class counts:
 - `resnet.py` trains on one of the constructed experiment folders and evaluates on `chest_xray/test`.
 - `fid.py` recalculates FID scores for WGAN or DDPM checkpoints against the real pneumonia image folder.
 
+## Key Findings
+
+- **Synthetic replacement** at a 1:1 pneumonia-training scale stays close to the **real-only baseline** in the archived downstream experiments.
+- In the archived **scratch ResNet-18** runs, **DDPM replacement** reaches the highest best accuracy at **0.8766**, while **WGAN-GP replacement** reaches the highest best AUC at **0.9449**.
+- In the archived **pretrained ResNet-18** runs, **DDPM replacement** reaches the highest best accuracy at **0.8910**, and both **WGAN-GP** and **DDPM** slightly outperform the **baseline** in best AUC.
+- Across both evaluation settings, the results suggest that **generated pneumonia images** can serve as a practical supplement when building balanced downstream training sets.
+
 ## Repository Structure
 
 - `WGAN_GP.py`: WGAN-GP training and synthetic pneumonia generation.
